@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using System.Text.Json.Serialization
+@inject NavigationManager NavigationManager
 @inject HttpClient Http
 
 <PageTitle>Home</PageTitle>
@@ -29,7 +30,7 @@ else
         <tbody>
         @foreach (var investor in investors)
         {
-            <tr>
+            <tr @onclick="() => NavigateToInvestorDetails(investor.FirmId)">
                 <td>@investor.FirmId</td>
                 <td>@investor.FirmName</td>
                 <td>@investor.Type</td>
@@ -49,21 +50,23 @@ else
         investors = await Http.GetFromJsonAsync<Investor[]>("http://127.0.0.1:8000/api/investors");
     }
 
+    public void NavigateToInvestorDetails(int firmId)
+    {
+        NavigationManager.NavigateTo($"/investors/{firmId}");
+    }
+
     public class Investor
     {
-        [JsonPropertyName("firm_id")]
-        public int FirmId { get; set; }
-        
-        [JsonPropertyName("firm_name")]
-        public string FirmName { get; set; }
-        
-        [JsonPropertyName("firm_type")]
-        public string Type { get; set; } 
+        [JsonPropertyName("firm_id")] public int FirmId { get; set; }
 
-        [JsonPropertyName("date_added")]
-        public DateTime DateAdded { get; set; }
+        [JsonPropertyName("firm_name")] public string FirmName { get; set; }
 
-        [JsonPropertyName("address")]
-        public string Address { get; set; }
+        [JsonPropertyName("firm_type")] public string Type { get; set; }
+
+        [JsonPropertyName("date_added")] public DateTime DateAdded { get; set; }
+
+        [JsonPropertyName("address")] public string Address { get; set; }
     }
+
 }
+
